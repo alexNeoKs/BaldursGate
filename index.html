@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#151a20" />
+  <meta name="description" content="Baldur's Gate: an interactive 3D living city map for tabletop roleplay." />
+  <title>Baldur's Gate | Living City Atlas</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./style.css?v=8" />
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.174.0/build/three.module.js",
+        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.174.0/examples/jsm/"
+      }
+    }
+  </script>
+</head>
+<body>
+  <div id="viewport" aria-label="3D Baldur's Gate game map"></div>
+  <div class="vignette" aria-hidden="true"></div>
+
+  <header class="top-bar">
+    <div class="brand">
+      <div class="brand-sigil" aria-hidden="true">✥</div>
+      <div><div class="brand-eyebrow">THE SWORD COAST · CAMPAIGN ATLAS</div><h1>Baldur's Gate</h1></div>
+      <span class="brand-divider"></span>
+      <span class="brand-subtitle">Living City</span>
+    </div>
+    <div class="top-actions">
+      <button class="top-button mobile-nav" id="mobile-places" aria-label="Show or hide places">Places</button>
+      <button class="top-button mobile-nav" id="mobile-tools" aria-label="Show or hide GM tools">Tools</button>
+      <div class="world-status"><span class="live-dot"></span><span id="world-status">DAYLIGHT · CLEAR</span></div>
+      <button class="top-button" id="reference-btn" title="View the supplied reference map (M)">▧ <span>Reference</span></button>
+      <button class="top-button" id="help-btn" title="Keyboard shortcuts (?)">⌨ <span>Controls</span></button>
+      <button class="top-button" id="top-view-btn" title="Toggle top view (V)">⬒ <span>Top View</span></button>
+      <button class="top-button" id="ui-toggle" title="Hide / show interface (H)">◫ <span>Hide UI</span></button>
+    </div>
+  </header>
+
+  <aside class="left-panel glass-panel hud" id="locations-panel">
+    <div class="section-top"><div><div class="eyebrow">FIELD GUIDE</div><h2>Places of Interest</h2></div><span class="section-ornament">❖</span></div>
+    <div class="search-wrap"><span class="search-glyph">⌕</span><input type="search" id="location-search" placeholder="Find a place..." aria-label="Find a map location" autocomplete="off"></div>
+    <div class="district-tabs" role="tablist" aria-label="Location districts">
+      <button data-district="all" class="active">All</button>
+      <button data-district="upper">Upper</button>
+      <button data-district="lower">Lower</button>
+      <button data-district="outer">Outer</button>
+    </div>
+    <div id="location-list" class="location-list"></div>
+    <div class="panel-footer"><span id="place-count">0 landmarks</span><span>⌖ Click to travel</span></div>
+  </aside>
+
+  <div class="right-panels hud">
+    <section class="glass-panel fold-panel" data-panel="atmosphere">
+      <button class="fold-header" aria-expanded="true"><span class="fold-icon">☼</span><span class="fold-title"><small>ENVIRONMENT</small><strong>Time & Weather</strong></span><kbd>T</kbd><span class="chevron">⌄</span></button>
+      <div class="fold-content">
+        <div class="field-heading"><span>Time of day</span><span id="clock-label" class="field-value">10:00 AM</span></div>
+        <input id="time-slider" type="range" min="0" max="24" step="0.25" value="10" aria-label="Time of day">
+        <div class="range-labels"><span>Midnight</span><span>Sunrise</span><span>Midday</span><span>Sunset</span></div>
+        <div class="two-buttons"><button class="action-button selected" data-time="day">☀ Day</button><button class="action-button" data-time="night">☾ Night</button></div>
+        <div class="option-row"><div><strong>Rainfall</strong><small>City-wide weather effect</small></div><button id="rain-switch" class="switch" type="button" aria-label="Toggle rain" aria-pressed="false"><span></span></button></div>
+      </div>
+    </section>
+
+    <section class="glass-panel fold-panel" data-panel="crimes">
+      <button class="fold-header" aria-expanded="true"><span class="fold-icon crime-icon">⚖</span><span class="fold-title"><small>GAME MASTER TOOLS</small><strong>Crime Events</strong></span><kbd>C</kbd><span class="chevron">⌄</span></button>
+      <div class="fold-content">
+        <p class="panel-description">Spawn an incident. Suspects and locations are marked in red on the map.</p>
+        <div class="crime-grid" id="crime-buttons"></div>
+        <div class="event-heading"><span>ACTIVE INCIDENTS</span><button id="clear-crimes" class="text-button">Clear all</button></div>
+        <div id="crime-events" class="crime-events"><div class="empty-events">No incidents in the city.</div></div>
+      </div>
+    </section>
+
+    <section class="glass-panel fold-panel" data-panel="party">
+      <button class="fold-header" aria-expanded="true"><span class="fold-icon">♜</span><span class="fold-title"><small>PARTY MANAGEMENT</small><strong>Your Adventurers</strong></span><kbd>P</kbd><span class="chevron">⌄</span></button>
+      <div class="fold-content">
+        <p class="panel-description">Select an adventurer, then click the map to place or move them. Click their miniature to select them again.</p>
+        <div id="party-list" class="party-list"></div>
+        <div class="party-actions"><button id="spawn-party" class="action-button">♧ Spawn all</button><button id="remove-party" class="action-button outline">Remove all</button></div>
+        <div id="move-instructions" class="move-instructions">Select a party member to begin.</div>
+      </div>
+    </section>
+  </div>
+
+  <div class="district-annotations hud" id="district-annotations" aria-hidden="true"></div>
+  <div class="toast-container" id="toast-container" aria-live="polite"></div>
+  <div class="landmark-detail glass-panel hud hidden" id="landmark-detail"></div>
+  <div class="map-bottom hud"><div class="bottom-chip"><span class="gold">◈</span><span id="coordinates">THE CITY AWAITS</span></div><div class="bottom-chip"><span class="gold">▦</span><span>GRID</span><button class="chip-toggle active" id="grid-toggle">ON</button><span class="chip-divider"></span><span>LABELS</span><button class="chip-toggle active" id="labels-toggle">ON</button></div><div class="bottom-chip controls-tip">Drag to orbit · Right-drag to pan · Scroll to zoom</div></div>
+  <div class="compass hud" aria-hidden="true"><span>N</span><div>✦</div><span>S</span></div>
+
+  <div class="modal hidden" id="reference-modal" role="dialog" aria-modal="true" aria-label="Baldur's Gate map reference">
+    <div class="modal-backdrop" data-close-modal></div><div class="modal-card"><div class="modal-head"><strong>Original Cartographic Reference</strong><button class="modal-close" data-close-modal aria-label="Close">✕</button></div><img src="./assets/baldurs-gate-reference.jpg" alt="Reference map of Baldur's Gate from the campaign" /><small>The 3D scene is an interpreted tabletop adaptation of this map, not an exact building-by-building survey.</small></div>
+  </div>
+  <div class="modal hidden" id="help-modal" role="dialog" aria-modal="true" aria-label="Map controls"><div class="modal-backdrop" data-close-modal></div><div class="modal-card help-card"><div class="modal-head"><strong>Atlas Controls</strong><button class="modal-close" data-close-modal aria-label="Close">✕</button></div><div class="key-help"><span>Orbit / pan / zoom</span><strong>Left-drag / Right-drag / Wheel</strong><span>Select adventurer</span><strong>1, 2, 3, 4</strong><span>Time & weather panel</span><kbd>T</kbd><span>Crime panel</span><kbd>C</kbd><span>Adventurer panel</span><kbd>P</kbd><span>Toggle rain / day-night</span><strong>R / N</strong><span>Toggle grid / labels</span><strong>G / L</strong><span>Reference / hide UI</span><strong>M / H</strong><span>Top view / reset camera</span><strong>V / F</strong><span>Camera pan</span><strong>W A S D</strong><span>Cancel selection / close</span><kbd>Esc</kbd></div></div></div>
+
+  <div class="loading" id="loading"><div class="loading-emblem">✥</div><div>DRAWING THE CITY</div><small>Opening the gates of Baldur's Gate...</small></div>
+  <script type="module" src="./main.js?v=8"></script>
+</body>
+</html>

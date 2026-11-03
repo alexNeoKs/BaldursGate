@@ -1,0 +1,131 @@
+:root{
+  --bg:#111619;
+  --panel:#171e23ef;
+  --line:#d4b88555;
+  --gold:#e0c389;
+  --text:#ebe4d3;
+  --muted:#a9b0ac;
+  --accent:#b03535;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;overflow:hidden;background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif}
+#viewport{position:fixed;inset:0}
+.vignette{position:fixed;inset:0;pointer-events:none;box-shadow:inset 0 0 120px #000c,inset 0 0 25px #0008}
+.top-bar{position:fixed;left:16px;right:16px;top:16px;z-index:10;display:flex;justify-content:space-between;align-items:flex-start;gap:12px;padding:14px 16px;border:1px solid var(--line);border-radius:10px;background:linear-gradient(180deg,#192126f0,#10171cd9);backdrop-filter:blur(10px)}
+.top-bar h1{margin:2px 0 4px;font:600 26px Cinzel,serif;color:#f1dfbf}
+.top-bar p,.eyebrow{margin:0;color:var(--muted)}
+.eyebrow{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold)}
+.top-actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+button{cursor:pointer;background:#d0b07b20;color:var(--text);border:1px solid #d6bd8a66;border-radius:7px;padding:10px 12px;font:600 12px 'DM Sans',sans-serif}
+button:hover{background:#d0b07b32}
+button.secondary{background:#ffffff10;border-color:#ffffff24;color:#d9d9d9}
+.panel{position:fixed;top:112px;width:min(340px,calc(100vw - 24px));z-index:10;border:1px solid var(--line);border-radius:10px;background:var(--panel);backdrop-filter:blur(10px);overflow:hidden;box-shadow:0 16px 48px #0008}
+.left-panel{left:16px}.right-panel{right:16px}
+.panel-header{display:flex;align-items:center;justify-content:space-between;width:100%;border:0;border-bottom:1px solid #ffffff14;background:#ffffff05;border-radius:0;padding:14px 16px;text-align:left}
+.panel-header small{display:block;color:var(--gold);letter-spacing:.16em;font-size:10px}
+.panel-header strong{display:block;font:600 17px Cinzel,serif}
+.panel-body{padding:14px 16px 16px}
+.collapsible.collapsed .panel-body{display:none}
+.collapsible.collapsed .chevron{transform:rotate(180deg)}
+.chevron{transition:transform .2s ease}
+.desc{margin:0 0 12px;color:var(--muted);font-size:12px;line-height:1.6}
+.party-list{display:flex;flex-direction:column;gap:8px}
+.party-row{display:flex;align-items:center;gap:10px;padding:10px;border:1px solid #ffffff15;border-radius:8px;background:#ffffff07}
+.party-row.active{border-color:#f0d9ab;background:#f0d9ab1a}
+.avatar{width:34px;height:34px;border-radius:8px;display:grid;place-items:center;font-size:18px;border:1px solid #ffffff26;background:#00000025}
+.role{display:block;color:var(--muted);font-size:11px;margin-top:2px}
+.row-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}.row-actions.stack{grid-template-columns:1fr}
+.status-box{margin-top:12px;padding:11px 12px;border-left:3px solid var(--gold);background:#d8b88514;color:#ddd1ba;font-size:12px;line-height:1.5}
+.bottom-hud{position:fixed;left:16px;right:16px;bottom:16px;z-index:10;display:flex;justify-content:center;gap:8px;flex-wrap:wrap}
+.chip{padding:10px 12px;border-radius:999px;background:#11181edc;border:1px solid #ffffff1d;color:#cdd1ca;font-size:12px}
+.hidden{display:none!important}
+.ui-hidden .panel,.ui-hidden .top-bar,.ui-hidden .bottom-hud{display:none!important}
+@media(max-width:900px){.top-bar{flex-direction:column}.panel{top:148px}}
+
+/* V8 encounter minis and GM readability */
+#viewport canvas{display:block;touch-action:none}
+.party-row{width:100%;text-align:left;cursor:pointer}
+.party-row>span:nth-child(2){flex:1}
+.party-state{font-size:9px;letter-spacing:.05em;color:var(--gold)}
+.mini-label{font:700 12px 'DM Sans',sans-serif;color:#fff4dd;white-space:nowrap;
+  text-shadow:0 1px 3px #000,0 0 8px #000;background:#132028ee;
+  border:1px solid #dcc89f99;border-radius:12px;padding:3px 7px;transform:translate(-50%,-145%)}
+.mini-label.hostile{border-color:#ee7777;background:#501a20e8;color:#ffe2db}
+#viewport{cursor:crosshair}
+button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+@media(max-width:660px){.panel{max-height:48vh;overflow-y:auto}.top-bar h1{font-size:20px}.bottom-hud .chip{font-size:10px;padding:6px 9px}}
+
+
+/* V8.1 safehouse tools: optional panel, single-token removal, delete-on-click. */
+#toggle-cult-panel{border-color:#c78c87aa;background:#61232745;color:#f4d8d0}
+#toggle-cult-panel:hover{background:#77333a8c}
+#toggle-cultist-remove-mode.remove-mode-active{background:#9d3030a8;border-color:#ed9a91;color:#fff4ef}
+#remove-selected-cultist:not(:disabled){border-color:#dc8d83;color:#ffe0d7}
+.cult-remove-notice{color:#ffe6df;border-color:#e1897a9c;background:#702c30ed}
+button:disabled{cursor:not-allowed;opacity:.43}
+@media(max-width:660px){#toggle-cult-panel{font-size:11px;padding:7px 9px}}
+
+
+/* Reusable V9.1 landmark roster, enabled only when a named scene declares npcTools. */
+#toggle-npc-panel{border-color:#c78c87aa;background:#61232745;color:#f4d8d0}
+#landmark-npc-panel .panel-body{max-height:min(73vh,700px);overflow-y:auto;scrollbar-color:#746448 #172027;scrollbar-width:thin}
+#landmark-npc-panel .npc-spawn-actions{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+#landmark-npc-panel .npc-spawn-actions button{text-align:center;font-size:11px;padding:10px 5px}
+#landmark-npc-panel .npc-management{grid-template-columns:1fr 1fr}
+#landmark-npc-panel .npc-management button{font-size:11px;padding:8px 5px}
+.npc-roster-heading{font-size:10px;letter-spacing:.11em;color:var(--gold);font-weight:700;margin:15px 0 7px}
+.npc-roster{display:flex;flex-direction:column;gap:4px;max-height:220px;overflow-y:auto;scrollbar-color:#746448 #172027;scrollbar-width:thin}
+.npc-roster-row{display:flex;gap:4px}
+.npc-roster-select{flex:1;text-align:left;padding:6px 9px;font-weight:500;background:#ffffff08;border-color:#ffffff22;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.npc-roster-select.active{border-color:#e6c992;background:#d1ae7539}
+.npc-roster-remove{flex:0 0 30px;padding:5px;color:#ffd7ce;border-color:#bb666655;background:#8a2d2b44;font-size:18px;line-height:1}
+.npc-roster-remove:hover{background:#b6403b88}
+#toggle-npc-remove-mode.remove-mode-active{background:#9d3030a8;border-color:#ed9a91;color:#fff4ef}
+.mini-label.npc-fist{border-color:#da6a5e;background:#522b2be9;color:#ffe6db}
+.mini-label.npc-civilian{border-color:#91bcb0;background:#243d41e9;color:#f3efe3}
+@media(max-width:900px){#landmark-npc-panel{right:12px;width:min(310px,calc(100vw - 24px))}}
+@media(max-width:660px){#landmark-npc-panel .panel-body{max-height:44vh}}
+
+
+/* Reusable scene-prop labels and discreet landmark identity reveal controls. */
+.landmark-prop-label{font:700 12px Cinzel,serif;letter-spacing:.08em;color:#f0dfb7;
+  background:#161a1ae8;padding:5px 10px;border:1px solid #ac9767b8;border-radius:6px;
+  white-space:nowrap;box-shadow:0 2px 14px #0009;text-shadow:0 1px 4px #000}
+.grave-epitaph{border-color:#a9a19a;background:#121718ed;color:#e3d8c3;
+  font-size:13px;box-shadow:0 0 24px #d1d6c02b,0 4px 16px #000c}
+.npc-identity-controls{margin:3px 0 13px;border:1px solid #baa98a55;border-radius:8px;
+  background:#9b9e8a13;padding:11px 12px;display:flex;flex-direction:column;gap:8px}
+.npc-identity-description{font-size:11px;line-height:1.55;color:#c9c9bb}
+.npc-identity-controls button{background:#c8ae7c25;border-color:#d6c89b88;color:#f8e7c5}
+.npc-identity-controls button.identity-revealed{background:#5c775e6b;border-color:#9cb99d}
+
+
+/* House of Grief and Cloister — generic landmark interaction controls. */
+#landmark-environment{padding:2px 0 11px;border-bottom:1px solid #bca19d33;margin-bottom:12px}
+#landmark-environment .npc-roster-heading{margin:4px 0 8px;color:#cdb1d7}
+.landmark-interaction-actions{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.landmark-interaction-actions button{font-size:11px;line-height:1.35;padding:10px 7px;border-color:#a882b277;background:#6d4d7936}
+.landmark-interaction-actions button:hover{background:#8d60a45e;border-color:#caa9d9}
+.landmark-interaction-actions button:nth-child(3n){grid-column:span 2}
+.cloister-zone-label{font:600 13px 'Cinzel',serif;letter-spacing:.07em;color:#e0caef;
+  text-shadow:0 1px 5px #000,0 0 16px #9170ce;
+  background:#181326c9;border:1px solid #987ba588;border-radius:8px;
+  padding:5px 11px;white-space:nowrap;transform:translate(-50%,-120%)}
+@media(max-width:660px){.landmark-interaction-actions{grid-template-columns:1fr}}
+
+
+/* Flaming Fist Barracks: small gold-on-slate structure tags and fast patrol UI. */
+.barracks-zone-label{font:700 11px Cinzel,Georgia,serif;letter-spacing:.06em;
+  color:#ffe0ad;background:#20292cec;padding:4px 8px;white-space:nowrap;
+  border:1px solid #bda06c9f;border-radius:5px;text-shadow:0 1px 4px #000;
+  box-shadow:0 2px 10px #0008}
+#patrol-controls:not(.hidden){margin:5px 0 11px}
+#toggle-patrols{border-color:#bb77719b;background:#823d3947;color:#fbe0cd}
+#toggle-patrols:hover{background:#a05c5480}
+
+/* Generic Bathhouse & Dungeon of the Dead Three — compact scene tags. */
+.dead-three-zone-label{font:600 10px Cinzel,Georgia,serif;letter-spacing:.055em;
+  color:#e2d2b4;background:#171a19d8;border:1px solid #9b8b6a8c;
+  padding:3px 6px;border-radius:4px;white-space:nowrap;
+  box-shadow:0 2px 10px #0009;text-shadow:0 1px 3px #000}
+#landmark-npc-panel .npc-spawn-actions button{min-height:37px}

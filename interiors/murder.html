@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Baldur's Gate Interior Encounter</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./interior.css?v=9" />
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.174.0/build/three.module.js",
+        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.174.0/examples/jsm/"
+      }
+    }
+  </script>
+</head>
+<body>
+  <div id="viewport"></div>
+  <div class="vignette"></div>
+
+  <header class="top-bar">
+    <div>
+      <div class="eyebrow">MURDER INTERIOR</div>
+      <h1 id="scene-title">Baldur's Gate Interior</h1>
+      <p id="scene-subtitle">Tabletop encounter room</p>
+    </div>
+    <div class="top-actions">
+      <button id="toggle-cult-panel" class="hidden" type="button" aria-pressed="true" title="Show or hide the cultist tools">Hide Cultist Panel</button>
+      <button id="reset-camera">Reset View</button>
+      <button id="toggle-grid">Grid On</button>
+      <button id="toggle-ui">Hide UI</button>
+    </div>
+  </header>
+
+  <aside class="panel left-panel collapsible" id="party-panel">
+    <button class="panel-header" data-target="party-panel-body">
+      <span>
+        <small>PLAYER TOOLS</small>
+        <strong>Adventurers</strong>
+      </span>
+      <span class="chevron">⌄</span>
+    </button>
+    <div class="panel-body" id="party-panel-body">
+      <p class="desc">Select a character, then click a legal grid square. Movement is limited to <strong>6 squares</strong> using chess-like grid movement.</p>
+      <div id="party-list" class="party-list"></div>
+      <div class="row-actions">
+        <button id="spawn-party">Spawn All</button>
+        <button id="clear-party" class="secondary">Clear All</button>
+      </div>
+      <div id="move-status" class="status-box">Select a character to begin.</div>
+    </div>
+  </aside>
+
+  <aside class="panel right-panel collapsible hidden" id="cult-panel">
+    <button class="panel-header" data-target="cult-panel-body">
+      <span>
+        <small>ENEMY TOOLS</small>
+        <strong>Bhaal Cultists</strong>
+      </span>
+      <span class="chevron">⌄</span>
+    </button>
+    <div class="panel-body" id="cult-panel-body">
+      <p class="desc">Spawn cultists, select one on the map to move or remove it, or switch on <strong>Remove by Click</strong> to delete several directly from the board.</p>
+      <div class="row-actions stack">
+        <button id="spawn-cultist">Spawn 1 Cultist</button>
+        <button id="spawn-three-cultists">Spawn 3 Cultists</button>
+        <button id="remove-selected-cultist" class="secondary" disabled>Remove Selected Cultist</button>
+        <button id="toggle-cultist-remove-mode" class="secondary" aria-pressed="false">Remove by Click: OFF</button>
+        <button id="clear-cultists" class="secondary">Clear All Cultists</button>
+      </div>
+      <div id="cult-status" class="status-box">No cultists active.</div>
+    </div>
+  </aside>
+
+  <div class="bottom-hud">
+    <div class="chip">Click a miniature to select it.</div>
+    <div class="chip">Shift not needed — movement snaps to the grid.</div>
+    <div class="chip" id="scene-chip">Scene 1</div>
+    <div class="chip cult-remove-notice hidden" id="cult-remove-notice">Remove mode active — click any cultist to delete it · Esc to exit</div>
+  </div>
+
+  <script type="module" src="./interior-main.js?v=9"></script>
+</body>
+</html>
